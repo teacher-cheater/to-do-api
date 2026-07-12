@@ -1,0 +1,16 @@
+html,
+body,
+#__nuxt {
+    height: 100%;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #F4F6F5;
+    color: #151A23;
+}
+
+::selection {
+    background: #C9601C;
+    color: #fff;
+}
