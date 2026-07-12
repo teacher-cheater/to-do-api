@@ -11,8 +11,21 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', [AuthController::class, 'user']);
 
     Route::apiResource('tasks', TaskController::class);
+
+    Route::get('/login', function () {
+        return response()->json(['message' => 'Unauthenticated.'], 401);
+    })->name('login');
 });
 
-Route::get('/test', function () {
-    return response()->json(['message' => 'API работает!']);
+Route::get('/test-db', function () {
+    try {
+        $user = App\Models\User::first();
+        return response()->json([
+            'user' => $user->email,
+            'tasks_count' => $user->tasks()->count(),
+            'all_tasks' => App\Models\Task::count(),
+        ]);
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
 });

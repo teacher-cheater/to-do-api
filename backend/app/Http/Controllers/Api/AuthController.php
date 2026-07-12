@@ -8,6 +8,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
+use App\Models\User;
 
 class AuthController extends Controller
 {
@@ -22,24 +23,10 @@ class AuthController extends Controller
             ]);
         }
 
-        $user = Auth::user();
+        // Retrieve typed User model to satisfy static analysis for createToken()
+        $user = User::findOrFail(Auth::id());
 
-        // Проверяем, что пользователь получен
-        if (!$user) {
-            return response()->json([
-                'message' => 'Пользователь не найден после авторизации'
-            ], 500);
-        }
-
-        // Проверяем, что метод createToken существует
-        if (!method_exists($user, 'createToken')) {
-            return response()->json([
-                'message' => 'Метод createToken не найден',
-                'user_class' => get_class($user)
-            ], 500);
-        }
-
-        $token = $user->createToken('auth_token')->plainTextToken;
+        $token = $user->createToken('auth_token', ['*'])->plainTextToken;
 
         return response()->json([
             'data' => $user,
