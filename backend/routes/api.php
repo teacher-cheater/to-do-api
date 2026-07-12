@@ -12,3 +12,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::apiResource('tasks', TaskController::class);
 });
+
+Route::get('/test', function () {
+    return response()->json(['message' => 'API работает!']);
+});
