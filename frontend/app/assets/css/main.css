@@ -1,3 +1,9 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
 html,
 body,
 #__nuxt {
@@ -13,4 +19,38 @@ body {
 ::selection {
     background: #C9601C;
     color: #fff;
+}
+
+:root {
+    /* Colors */
+    --color-line: #dde2e0;
+    --color-accent: #c9601c;
+    --color-ink: #151a23;
+    --color-slate: #5b6472;
+    --color-paper: #f4f6f5;
+    --color-danger: #dc2626;
+    --color-danger-bg: #fef2f2;
+    --color-pending: #94a3b8;
+    --color-progress: #c9601c;
+    --color-done: #1f7a5c;
+
+    /* Fonts */
+    --font-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+
+    /* Border Radius */
+    --radius-full: 9999px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.15);
+
+    /* Transitions */
+    --transition-fast: 0.15s ease;
+    --transition-base: 0.25s ease;
+    --transition-slow: 0.4s ease;
 }
