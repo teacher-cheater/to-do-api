@@ -34,34 +34,11 @@ export function useTasks() {
         }
     }
 
-    async function createTask(payload: Partial<Task>) {
-        const res = await request<{ data: Task }>('/api/tasks', {
-            method: 'POST',
-            body: payload,
-        });
-        return res.data;
-    }
-
-    async function updateTask(id: number, payload: Partial<Task>) {
-        const res = await request<{ data: Task }>(`/api/tasks/${id}`, {
-            method: 'PATCH',
-            body: payload,
-        });
-        return res.data;
-    }
-
-    async function deleteTask(id: number) {
-        await request(`/api/tasks/${id}`, { method: 'DELETE' });
-    }
-
     return {
         tasks,
         meta,
         loading,
         error,
         fetchTasks,
-        createTask,
-        updateTask,
-        deleteTask,
     };
 }
