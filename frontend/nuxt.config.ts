@@ -28,6 +28,20 @@ export default defineNuxtConfig({
                 process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:8000',
         },
     },
+    vite: {
+        server: {
+            proxy: {
+                '/api': {
+                    target: 'http://localhost:8000',
+                    changeOrigin: true,
+                },
+                '/sanctum': {
+                    target: 'http://localhost:8000',
+                    changeOrigin: true,
+                },
+            },
+        },
+    },
     typescript: {
         strict: true,
     },

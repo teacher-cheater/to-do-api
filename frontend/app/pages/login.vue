@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { navigateTo } from '#app';
 import { ref } from 'vue';
 import { useAuth } from '../composables/useAuth';
 
