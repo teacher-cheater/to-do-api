@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { navigateTo } from '#app';
 
-navigateTo('/tasks');
+await navigateTo('/tasks');
 </script>
 
 <template />
