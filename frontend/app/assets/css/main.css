@@ -1,56 +1,62 @@
+:root {
+  --color-paper: #f4f6f5;
+  --color-ink: #151a23;
+  --color-slate: #5b6472;
+  --color-line: #dde2e0;
+  --color-accent: #c9601c;
+  --color-pending: #94a3b8;
+  --color-progress: #c9601c;
+  --color-done: #1f7a5c;
+  --color-danger: #dc2626;
+  --color-danger-bg: #fef2f2;
+
+  --font-display: "Space Grotesk", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  --radius-lg: 1rem;
+  --radius-md: 0.5rem;
+  --radius-full: 999px;
+}
+
 * {
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 html,
 body,
 #__nuxt {
-    height: 100%;
+  height: 100%;
+  margin: 0;
 }
 
 body {
-    font-family: 'Inter', sans-serif;
-    background-color: #F4F6F5;
-    color: #151A23;
+  font-family: var(--font-body);
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
 }
 
 ::selection {
-    background: #C9601C;
-    color: #fff;
+  background: var(--color-accent);
+  color: #fff;
 }
 
-:root {
-    /* Colors */
-    --color-line: #dde2e0;
-    --color-accent: #c9601c;
-    --color-ink: #151a23;
-    --color-slate: #5b6472;
-    --color-paper: #f4f6f5;
-    --color-danger: #dc2626;
-    --color-danger-bg: #fef2f2;
-    --color-pending: #94a3b8;
-    --color-progress: #c9601c;
-    --color-done: #1f7a5c;
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
 
-    /* Fonts */
-    --font-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
-    --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+}
 
-    /* Border Radius */
-    --radius-full: 9999px;
-    --radius-md: 8px;
-    --radius-lg: 12px;
-    --radius-xl: 16px;
-
-    /* Shadows */
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
-    --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.15);
-
-    /* Transitions */
-    --transition-fast: 0.15s ease;
-    --transition-base: 0.25s ease;
-    --transition-slow: 0.4s ease;
+.bg-grid {
+  background-image:
+    linear-gradient(to right, #e7ebe9 1px, transparent 1px),
+    linear-gradient(to bottom, #e7ebe9 1px, transparent 1px);
+  background-size: 24px 24px;
 }
