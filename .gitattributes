@@ -1,0 +1,13 @@
+# Скрипты, запускаемые внутри Linux-контейнеров, должны всегда иметь
+# Unix-окончания строк (LF), независимо от core.autocrlf на конкретной
+# машине — иначе шебанг (#!/bin/sh) ломается на Windows-чекаутах и
+# контейнер падает с "no such file or directory"
+* text=auto eol=lf
+
+*.sh text eol=lf
+docker-entrypoint.sh text eol=lf
+
+# Бинарные файлы — не трогать вообще (на всякий случай, если появятся)
+*.png binary
+*.jpg binary
+*.ico binary
