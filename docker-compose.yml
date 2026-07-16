@@ -1,57 +1,111 @@
+# Поднимает ВЕСЬ проект: MySQL, backend (Laravel, dev-сервер на :8000),
+# frontend (Nuxt, dev-сервер на :3000), phpMyAdmin и Swagger UI.
+# На хосте не нужен ни PHP, ни Composer, ни Node — только Docker.
+#
+#   docker compose up --build     # первый запуск (дольше: сборка образов,
+#                                  # composer install, npm install, миграции)
+#   docker compose up             # все последующие запуски (быстро)
+#
+# После первого запуска локальная папка backend/ будет ДОПОЛНЕНА
+# сгенерированными файлами Laravel-скелета (artisan, public/, config/ и
+# т.д.) — это ожидаемо, подробности в docker-entrypoint.sh и README.
+
 services:
-    mysql:
-        image: mysql:8.0
-        container_name: todo_mysql
-        restart: unless-stopped
-        environment:
-            MYSQL_DATABASE: todo
-            MYSQL_USER: todo
-            MYSQL_PASSWORD: root
-            MYSQL_ROOT_PASSWORD: root
-        ports:
-            - '3306:3306'
-        volumes:
-            - mysql_data:/var/lib/mysql
-        healthcheck:
-            test:
-                [
-                    'CMD',
-                    'mysqladmin',
-                    'ping',
-                    '-h',
-                    'localhost',
-                    '-uroot',
-                    '-proot',
-                ]
-            interval: 5s
-            timeout: 5s
-            retries: 10
+  mysql:
+    image: mysql:8.0
+    container_name: todo_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: todo
+      MYSQL_USER: todo
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: root_secret
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot_secret"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
-    phpmyadmin:
-        image: phpmyadmin:5
-        container_name: todo_phpmyadmin
-        restart: unless-stopped
-        environment:
-            PMA_HOST: mysql
-            PMA_USER: root
-            PMA_PASSWORD: root
-        ports:
-            - '8080:80'
-        depends_on:
-            mysql:
-                condition: service_healthy
+  phpmyadmin:
+    image: phpmyadmin:5
+    container_name: todo_phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: root
+      PMA_PASSWORD: root_secret
+    ports:
+      - "8080:80"
+    depends_on:
+      mysql:
+        condition: service_healthy
 
-    swagger-ui:
-        image: swaggerapi/swagger-ui
-        container_name: todo_swagger
-        restart: unless-stopped
-        environment:
-            SWAGGER_JSON: /docs/openapi.yaml
-            BASE_URL: /
-        volumes:
-            - ./docs/openapi.yaml:/docs/openapi.yaml:ro
-        ports:
-            - '8081:8080'
+  backend:
+    build:
+      context: ./backend
+    container_name: todo_backend
+    restart: unless-stopped
+    volumes:
+      # Исходники — bind mount, чтобы менять код на хосте и сразу видеть
+      # результат. vendor/ — отдельный именованный volume: не нужно
+      # засорять хостовую папку тяжёлыми зависимостями, и ускоряет
+      # composer install на повторных запусках.
+      - ./backend:/var/www
+      - backend_vendor:/var/www/vendor
+    ports:
+      - "8000:8000"
+    environment:
+      APP_ENV: local
+      APP_DEBUG: "true"
+      APP_URL: http://localhost:8000
+      # Внутри Docker-сети сервисы обращаются друг к другу по ИМЕНИ
+      # сервиса ("mysql"), а не по localhost/127.0.0.1 — это не то же
+      # самое, что подключение с хоста (см. .env.example, там для
+      # запуска БЕЗ Docker нужен именно 127.0.0.1).
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: "3306"
+      DB_DATABASE: todo
+      DB_USERNAME: todo
+      DB_PASSWORD: secret
+      SESSION_DRIVER: cookie
+      FRONTEND_URL: http://localhost:3000
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: todo_frontend
+    restart: unless-stopped
+    volumes:
+      - ./frontend:/app
+      - frontend_node_modules:/app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      NUXT_PUBLIC_API_BASE: http://localhost:8000
+    depends_on:
+      - backend
+
+  swagger-ui:
+    image: swaggerapi/swagger-ui
+    container_name: todo_swagger
+    restart: unless-stopped
+    environment:
+      SWAGGER_JSON: /docs/openapi.yaml
+      BASE_URL: /
+    volumes:
+      - ./docs/openapi.yaml:/docs/openapi.yaml:ro
+    ports:
+      - "8081:8080"
 
 volumes:
-    mysql_data:
+  mysql_data:
+  backend_vendor:
+  frontend_node_modules:
