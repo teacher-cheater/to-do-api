@@ -4,29 +4,27 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
-use App\Models\User;
 
 class AuthController extends Controller
 {
-
     public function login(LoginRequest $request): JsonResponse
     {
         $credentials = $request->validated();
 
-        if (! Auth::attempt($credentials)) {
+        $user = User::where('email', $credentials['email'])->first();
+
+        if (! $user || ! Hash::check($credentials['password'], $user->password)) {
             throw ValidationException::withMessages([
                 'email' => ['Указанные учетные данные неверны.'],
             ]);
         }
 
-        // Retrieve typed User model to satisfy static analysis for createToken()
-        $user = User::findOrFail(Auth::id());
-
-        $token = $user->createToken('auth_token', ['*'])->plainTextToken;
+        $token = $user->createToken('spa')->plainTextToken;
 
         return response()->json([
             'data' => $user,

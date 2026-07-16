@@ -17,11 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__ . '/../routes/console.php',
         health: '/up',
     )
-    ->withMiddleware(function (Middleware $middleware) {
-        $middleware->statefulApi();
-
-        $middleware->validateCsrfTokens(except: []);
-    })
+    ->withMiddleware(function (Middleware $middleware) {})
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->shouldRenderJsonWhen(function (Request $request, Throwable $e) {
             return $request->is('api/*') || $request->expectsJson();
@@ -54,6 +50,13 @@ return Application::configure(basePath: dirname(__DIR__))
             }
 
             $status = method_exists($e, 'getStatusCode') ? $e->getStatusCode() : 500;
+
+            if ($status === 500) {
+                logger()->error('Unhandled API exception: ' . $e->getMessage(), [
+                    'exception' => get_class($e),
+                    'file' => $e->getFile() . ':' . $e->getLine(),
+                ]);
+            }
 
             return response()->json([
                 'message' => $status === 500
