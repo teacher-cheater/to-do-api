@@ -1,7 +1,7 @@
 export default defineNuxtConfig({
     compatibilityDate: '2026-13-07',
     devtools: { enabled: true },
-    modules: [],
+
     ssr: false,
 
     app: {
@@ -22,28 +22,12 @@ export default defineNuxtConfig({
             ],
         },
     },
+    css: ['~/assets/css/main.css'],
+
     runtimeConfig: {
         public: {
             apiBase:
                 process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:8000',
         },
-    },
-    vite: {
-        server: {
-            proxy: {
-                '/api': {
-                    target: 'http://localhost:8000',
-                    changeOrigin: true,
-                },
-                '/sanctum': {
-                    target: 'http://localhost:8000',
-                    changeOrigin: true,
-                },
-            },
-        },
-    },
-    css: ['@/assets/css/main.css'],
-    typescript: {
-        strict: true,
     },
 });
