@@ -17,6 +17,7 @@ return new class extends Migration
             $table->enum('status', ['pending', 'in_progress', 'completed'])->default('pending');
             $table->timestamps();
 
+            // Supports the list endpoint's sorting/filtering requirements.
             $table->index(['user_id', 'status']);
             $table->index('due_date');
         });
